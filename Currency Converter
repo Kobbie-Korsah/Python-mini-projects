@@ -1,0 +1,95 @@
+def eur_to_usd(amount):
+    return amount * 1.1666
+
+def eur_to_gbp(amount):
+    return amount * 0.865
+
+def usd_to_eur(amount):
+    return amount * 0.857
+
+def usd_to_gbp(amount):
+    return amount * 0.739
+
+def gbp_to_eur(amount):
+    return amount * 1.156
+
+def gbp_to_usd(amount):
+    return amount * 1.356
+
+
+def convert(amount, from_currency, to_currency):
+    """
+    Decides which conversion function to call based on input and output currencies.
+    Returns the converted amount.
+    """
+    if from_currency == to_currency:
+        return amount  # same currency → no conversion
+
+    if from_currency == "EUR" and to_currency == "USD":
+        return eur_to_usd(amount)
+    elif from_currency == "EUR" and to_currency == "GBP":
+        return eur_to_gbp(amount)
+
+    elif from_currency == "USD" and to_currency == "EUR":
+        return usd_to_eur(amount)
+    elif from_currency == "USD" and to_currency == "GBP":
+        return usd_to_gbp(amount)
+
+    elif from_currency == "GBP" and to_currency == "EUR":
+        return gbp_to_eur(amount)
+    elif from_currency == "GBP" and to_currency == "USD":
+        return gbp_to_usd(amount)
+
+    return None  # fallback if unexpected combination
+
+
+# Function to return currency symbols
+def symbol(code):
+    """
+    Takes a currency code ('EUR', 'USD', 'GBP') and returns its symbol (€,$,£)
+    """
+    if code == "EUR":
+        return "€"
+    elif code == "USD":
+        return "$"
+    elif code == "GBP":
+        return "£"
+    return code  # fallback if invalid code
+
+
+print("Welcome to Currency Converter!")
+print("Available currencies: Euro(EUR), Dollar(USD), Pounds(GBP)")
+
+while True:
+    # Ask for initial currenncy (the currecy the user wants to convert)
+    from_currency = input("Enter currency you want to convert (EUR/USD/GBP or 'quit' to exit): ").upper()
+    if from_currency == "QUIT":
+        print("Goodbye")
+        break  # exit the program
+
+    if from_currency not in ["EUR", "USD", "GBP"]:
+        print("Invalid currency. Try again.")
+        continue  # ask again
+
+    # Ask for target currency (the curreny the user wants to convert to)
+    to_currency = input("Enter currency you want to convert to (EUR/USD/GBP): ").upper()
+    if to_currency not in ["EUR", "USD", "GBP"]:
+        print("Invalid currency. Try again.")
+        continue  # ask again
+
+
+    # Ask for amount to convert
+    try:
+        amount = float(input(f"Enter amount in {symbol(from_currency)}: "))
+    except ValueError:
+        print("Invalid number. Try again.")
+        continue  # ask again
+
+    # Perform conversion
+
+    result = convert(amount, from_currency, to_currency)
+    if result is None:
+        print("Conversion not available.\n")
+    else:
+        # Output the result with currency symbols
+        print(f"{symbol(from_currency)}{amount:.2f} = {symbol(to_currency)}{result:.2f}\n")
