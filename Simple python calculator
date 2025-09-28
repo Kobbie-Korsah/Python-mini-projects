@@ -1,0 +1,55 @@
+def add(Fist_Input, Second_Input):
+    return Fist_Input + Second_Input
+
+def subtract(Fist_Input, Second_Input):
+    return Fist_Input - Second_Input
+
+def multiply(Fist_Input, Second_Input):
+    return Fist_Input * Second_Input
+
+def divide(Fist_Input, Second_Input):
+    if Second_Input == 0:
+        raise ValueError("Cannot divide by zero.")
+    return Fist_Input / Second_Input
+
+def power(Fist_Input, Second_Input):
+    return Fist_Input ** Second_Input
+
+def get_number(prompt):
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("Please enter a valid number (e.g. 3.5 or 7).")
+
+print("Calculator Beta 1")
+print("Operations: +  -  *  /  ^  %")
+
+while True:
+    op = input("Choose operation (+, -, *, /, ^, %, q to quit): ").strip().lower() #OP = operation picked by the user
+    if op in ('q', 'quit', 'exit'): # when user enters q program ends
+        print("Goodbye!")
+        break
+    if op not in ['+', '-', '*', '/', '^', '%']:
+        print("Unknown operation. Try again.")
+        continue
+
+  Fist_Input = get_number("Enter first number: ")
+    Second_Input = get_number("Enter second number: ")
+
+   try: #“try” lets some code that might cause an error
+        if op == '+':
+            res = add(Fist_Input, Second_Input) # res = result of the function
+        elif op == '-':
+            res = subtract(Fist_Input, Second_Input)
+        elif op == '*':
+            res = multiply(Fist_Input, Second_Input)
+        elif op == '/':
+            res = divide(Fist_Input, Second_Input)
+        elif op == '^':
+            res = power(Fist_Input, Second_Input)
+        elif op == '%':
+            res = Fist_Input % Second_Input
+        print("Result:", res)
+    except Exception as e: #if an error occurs an "except" will run in the place of the try
+        print("Error:", e)
