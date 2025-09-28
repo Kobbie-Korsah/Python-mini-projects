@@ -1,0 +1,25 @@
+def CelsiusToFahrenheit(celsius):
+    return (celsius * 9/5) + 32
+
+def FahrenheitToCelsius(fahrenheit):
+    return (fahrenheit - 32) * 5/9
+
+print("Welcome to the Temperature Converter!")
+
+while True:
+    choice = input("Convert Celsius to Fahrenheit? (yes/no): ").strip().lower()
+
+    if choice == "yes":
+        celsius = float(input("Enter temperature in Celsius: "))
+        fahrenheit = CelsiusToFahrenheit(celsius)
+        print(f"{celsius}°C = {fahrenheit:.2f}°F")
+        break
+
+    elif choice == "no":
+        fahrenheit = float(input("Enter temperature in Fahrenheit: "))
+        celsius = FahrenheitToCelsius(fahrenheit)
+        print(f"{fahrenheit}°F = {celsius:.2f}°C")
+        break
+
+    else:
+        print("Invalid input, please type 'yes' or 'no'.")
