@@ -1,0 +1,118 @@
+# Conversion functions
+def meters_to_centimeters(length):
+    return length * 100
+
+def centimeters_to_meters(length):
+    return length / 100
+
+def millimeters_to_centimeters(length):
+    return length / 10
+
+def centimeters_to_millimeters(length):
+    return length * 10
+
+def millimeters_to_meters(length):
+    return length / 1000
+
+def meters_to_millimeters(length):
+    return length * 1000
+
+def kilometers_to_meters(length):
+    return length * 1000
+
+def meters_to_kilometers(length):
+    return length / 1000
+
+def kilometers_to_centimeters(length):
+    return length * 100000
+
+def centimeters_to_kilometers(length):
+    return length / 100000
+
+def kilometers_to_millimeters(length):
+    return length * 1000000
+
+def millimeters_to_kilometers(length):
+    return length / 1000000
+
+
+# Main converter logic - looks for what function to carry out the conversion based upon the users input
+def converter(length, from_measurement, to_measurement):
+    # if both units are the same, return original value
+    if from_measurement == to_measurement:
+        return length
+    
+    # m ↔ cm
+    if from_measurement == "m" and to_measurement == "cm":
+        return meters_to_centimeters(length)
+    if from_measurement == "cm" and to_measurement == "m":
+        return centimeters_to_meters(length)
+
+    # mm ↔ cm
+    if from_measurement == "mm" and to_measurement == "cm":
+        return millimeters_to_centimeters(length)
+    if from_measurement == "cm" and to_measurement == "mm":
+        return centimeters_to_millimeters(length)
+
+    # mm ↔ m
+    if from_measurement == "mm" and to_measurement == "m":
+        return millimeters_to_meters(length)
+    if from_measurement == "m" and to_measurement == "mm":
+        return meters_to_millimeters(length)
+
+    # km ↔ m
+    if from_measurement == "km" and to_measurement == "m":
+        return kilometers_to_meters(length)
+    if from_measurement == "m" and to_measurement == "km":
+        return meters_to_kilometers(length)
+
+    # km ↔ cm
+    if from_measurement == "km" and to_measurement == "cm":
+        return kilometers_to_centimeters(length)
+    if from_measurement == "cm" and to_measurement == "km":
+        return centimeters_to_kilometers(length)
+
+    # km ↔ mm
+    if from_measurement == "km" and to_measurement == "mm":
+        return kilometers_to_millimeters(length)
+    if from_measurement == "mm" and to_measurement == "km":
+        return millimeters_to_kilometers(length)
+
+    # if nothing matches, raise error
+    raise ValueError("Invalid conversion.")
+
+
+# Get a valid number from the user
+def get_number(prompt):
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("An error has occured - Please enter a valid number.")
+
+
+# Main Program
+print("Welsome to Measurement Converter")
+print("Units: km (kilometers), m (meters), cm (centimeters), mm (millimeters)")
+
+while True:
+    from_unit = input("Convert from (km/m/cm/mm): ").strip().lower()
+    to_unit = input("Convert to (km/m/cm/mm): ").strip().lower()
+
+    if from_unit not in ["km", "m", "cm", "mm"] or to_unit not in ["km", "m", "cm", "mm"]:
+        print(" Invalid unit. Try again.")
+        continue
+    # User input length
+    length = get_number("Enter length: ")user 
+    
+
+    try:
+        result = converter(length, from_unit, to_unit)
+        print(f" {length} {from_unit} = {result} {to_unit}")
+    except Exception as e:
+        print(" Error:", e)
+
+    again = input("Do you want another conversion? (y/n): ").lower().strip()
+    if again != "y":
+        print("Goodbye!")
+        break
