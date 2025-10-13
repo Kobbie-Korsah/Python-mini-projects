@@ -1,0 +1,45 @@
+tasks = []  # List to store all tasks as dictionaries with task name and completion status
+
+def add_task(task):
+    # Adds a new task to the list with "completed" initially set to False
+    tasks.append({"task": task, "completed": False})
+    print(f"Task '{task}' added!")
+
+def view_tasks():
+    # Displays all tasks with their completion status
+    if not tasks:
+        print("No tasks yet.")  # Message shown if there are no tasks
+    else:
+        for i, t in enumerate(tasks, start=1):
+            # Uses a checkmark if task is complete, otherwise a cross
+            status = "✓" if t["completed"] else "✗"
+            print(f"{i}. {t['task']} [{status}]")  # Prints each task with index and status
+
+def complete_task(index):
+    # Marks a specific task as completed based on its index number
+    try:
+        tasks[index - 1]["completed"] = True  # Updates the completion status
+        print(f"Task '{tasks[index - 1]['task']}' marked as complete!")
+    except IndexError:
+        # Handles invalid task number input
+        print("Invalid task number.")
+
+
+# Main program loop that runs continuously until the user exits
+while True:
+    print("\n--- Simple Task Manager ---")
+    print("1. Add Task\n2. View Tasks\n3. Complete Task\n4. Exit")
+    choice = input("Choose an option: ")
+
+    # Handles user's menu choice
+    if choice == "1":
+        add_task(input("Enter task: "))  # Adds a new task
+    elif choice == "2":
+        view_tasks()  # Displays current tasks
+    elif choice == "3":
+        complete_task(int(input("Task number to complete: ")))  # Marks a task as done
+    elif choice == "4":
+        print("Goodbye!")  # Exits the loop and ends program
+        break
+    else:
+        print("Invalid choice.")  # Handles invalid input
