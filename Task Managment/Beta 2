@@ -1,0 +1,113 @@
+# Beta 2: Safe Class-Based Task Manager with File Storage
+# Disclaimer comments ,made to this code is compared to my forst code please check out my first version (Beta 1) to understand the full picture -  Thank You :)
+import json
+from datetime import datetime
+import os  # Used to ensure the file path exists
+
+# ------------------------------
+# TASK CLASS
+# ------------------------------
+class Task:
+    def __init__(self, title, due_date=None, completed=False, created_at=None):
+        # Each task now has a title, completed status, created_at timestamp, and optional due date
+        # Beta 1 only stored a simple string and completion status in memory
+        self.title = title
+        self.completed = completed
+        self.created_at = created_at or datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Added feature
+        self.due_date = due_date  # New feature not present in Beta 1
+
+    def to_dict(self):
+        # Converts the Task object to a dictionary for saving to JSON
+        # Beta 1 did not have persistent storage, so this method is new
+        return self.__dict__
+
+# ------------------------------
+# TASK MANAGER CLASS
+# ------------------------------
+class TaskManager:
+    def __init__(self, filename="tasks.json"):
+        # Filename allows saving/loading tasks; Beta 1 had no file storage
+        self.filename = filename
+        self.tasks = self.load_tasks()  # Loads existing tasks from file at startup
+
+    def add_task(self, title, due_date=None):
+        # Adds a Task object to the list
+        # Beta 1 simply appended a dictionary to a global list
+        task = Task(title, due_date)
+        self.tasks.append(task)
+        self.save_tasks()  # Saves immediately to file (persistent)
+        print(f"Task '{title}' added.")
+
+    def view_tasks(self):
+        # Displays all tasks with status and due date
+        # Beta 1 only displayed task and status; no due date or timestamp
+        if not self.tasks:
+            print("No tasks found.")
+            return
+        for i, t in enumerate(self.tasks, 1):
+            status = "✓" if t.completed else "✗"
+            print(f"{i}. {t.title} [{status}] - Due: {t.due_date or 'N/A'}")
+
+    def complete_task(self, index):
+        # Marks a task complete and updates the file
+        # Beta 1 did the same but only in memory; no file saving
+        try:
+            task = self.tasks[index - 1]
+            if task.completed:
+                print(f"Task '{task.title}' is already completed.")
+            else:
+                task.completed = True
+                self.save_tasks()  # Save changes to file
+                print(f"Task '{task.title}' marked complete.")
+        except IndexError:
+            print("Invalid task number.")  # Better error handling than Beta 1
+
+    def save_tasks(self):
+        # Saves tasks to JSON file; ensures directory exists
+        # Beta 1 had no file writing at all
+        os.makedirs(os.path.dirname(self.filename) or ".", exist_ok=True)
+        with open(self.filename, "w") as f:
+            json.dump([t.to_dict() for t in self.tasks], f, indent=4)
+
+    def load_tasks(self):
+        # Loads tasks from JSON; handles file missing or corrupted gracefully
+        # Beta 1 simply started with an empty list every time
+        if not os.path.exists(self.filename):
+            return []
+        try:
+            with open(self.filename, "r") as f:
+                data = json.load(f)
+                return [Task(**t) for t in data]  # Recreates Task objects from dictionaries
+        except (json.JSONDecodeError, FileNotFoundError):
+            return []
+
+# ------------------------------
+# MAIN PROGRAM LOOP
+# ------------------------------
+manager = TaskManager()  # Uses a TaskManager instance instead of global functions/lists (Beta 1)
+
+while True:
+    print("\n--- Task Manager ---")
+    print("1. Add Task\n2. View Tasks\n3. Complete Task\n4. Exit")
+    choice = input("Choose an option: ").strip()  # Stripping spaces is new; Beta 1 did not do this
+
+    if choice == "1":
+        title = input("Task title: ").strip()
+        due = input("Due date (optional): ").strip() or None
+        if title:
+            manager.add_task(title, due)
+        else:
+            print("Task title cannot be empty.")  # Added validation; Beta 1 allowed empty tasks
+    elif choice == "2":
+        manager.view_tasks()  # Object-oriented call replaces global function
+    elif choice == "3":
+        try:
+            num = int(input("Task number: "))
+            manager.complete_task(num)
+        except ValueError:
+            print("Please enter a valid number.")  # Beta 1 would crash if input was not an int
+    elif choice == "4":
+        print("Goodbye!")
+        break
+    else:
+        print("Invalid choice. Please enter 1-4.")  # Improved input validation
