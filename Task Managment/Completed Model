@@ -1,0 +1,133 @@
+import json
+from datetime import datetime
+
+# MODEL 3 (Advanced Task Manager)
+# Compared to Model 2:
+# - Adds categories, priority, and due dates to tasks.
+# - Tasks are stored as objects (class-based) with extra attributes.
+# - Adds features like search and delete.
+# - Data is persisted in a JSON file (same as Model 2).
+
+class Task:
+    # In Model 2, tasks had only title, due_date, completed, and timestamp.
+    # Model 3 adds category and priority for better organization.
+    def __init__(self, title, category="General", priority="Medium", due_date=None, completed=False, created_at=None):
+        self.title = title
+        self.category = category
+        self.priority = priority
+        self.due_date = due_date
+        self.completed = completed
+        # Use passed created_at if exists, otherwise create a new timestamp
+        self.created_at = created_at or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    def to_dict(self):
+        # Converts the Task object to a dictionary for saving to JSON
+        # Model 2 also used this approach but had fewer attributes.
+        return self.__dict__
+
+class TaskManager:
+    # Manages a collection of tasks, similar to Model 2
+    def __init__(self, filename="advanced_tasks.json"):
+        self.filename = filename
+        self.tasks = self.load_tasks()  # Loads tasks from file if available
+        # Compared to Model 2, this version is ready for additional attributes like category/priority
+
+    def add_task(self, title, category="General", priority="Medium", due_date=None):
+        # Adds a new task to the list and saves immediately
+        # Model 2 only used title and due_date
+        task = Task(title, category, priority, due_date)
+        self.tasks.append(task)
+        self.save_tasks()
+        print(f"Added '{title}' under '{category}' with {priority} priority.")
+
+    def view_tasks(self, filter_by=None, value=None):
+        # Displays all tasks, optionally filtered by an attribute (e.g., category)
+        # Model 2 could only display all tasks without filtering or showing priority/category
+        filtered = self.tasks
+        if filter_by and value:
+            filtered = [t for t in self.tasks if getattr(t, filter_by, "").lower() == value.lower()]
+
+        if not filtered:
+            print("No tasks found.")
+            return
+
+        for i, t in enumerate(filtered, 1):
+            status = "✓" if t.completed else "✗"
+            print(f"{i}. {t.title} [{status}] ({t.priority}) - {t.category} | Due: {t.due_date or 'N/A'}")
+
+    def complete_task(self, index):
+        # Marks a task as completed and saves changes
+        # Same as Model 2
+        try:
+            self.tasks[index - 1].completed = True
+            self.save_tasks()
+            print(f"Marked '{self.tasks[index - 1].title}' as complete.")
+        except IndexError:
+            print("Invalid task number.")
+
+    def delete_task(self, index):
+        # New feature: removes a task by index and saves
+        # Model 2 did not support deleting tasks
+        try:
+            removed = self.tasks.pop(index - 1)
+            self.save_tasks()
+            print(f"Deleted '{removed.title}'.")
+        except IndexError:
+            print("Invalid task number.")
+
+    def search_tasks(self, keyword):
+        # New feature: searches tasks by keyword in the title
+        # Model 2 had no search functionality
+        matches = [t for t in self.tasks if keyword.lower() in t.title.lower()]
+        if not matches:
+            print("No matches found.")
+        else:
+            for i, t in enumerate(matches, 1):
+                print(f"{i}. {t.title} - {t.category} [{t.priority}]")
+
+    def save_tasks(self):
+        # Saves all tasks to JSON
+        # Similar to Model 2, but now includes extra attributes for each task
+        with open(self.filename, "w") as f:
+            json.dump([t.to_dict() for t in self.tasks], f, indent=4)
+
+    def load_tasks(self):
+        # Loads tasks from JSON file
+        # Model 2 had a simpler version; this ensures all new attributes are loaded correctly
+        try:
+            with open(self.filename, "r") as f:
+                data = json.load(f)
+                return [Task(**t) for t in data]
+        except FileNotFoundError:
+            return []
+
+manager = TaskManager()
+
+while True:
+    # Main menu loop — Model 3 adds more options than Model 2
+    print("\n--- Advanced Task Manager ---")
+    print("1. Add Task\n2. View Tasks\n3. Complete Task\n4. Delete Task")
+    print("5. Search Task\n6. Filter by Category\n7. Exit")
+    choice = input("Select option: ")
+
+    if choice == "1":
+        # Collects title, category, priority, and due date
+        title = input("Task title: ")
+        cat = input("Category: ") or "General"
+        prio = input("Priority (Low/Medium/High): ") or "Medium"
+        due = input("Due date (optional): ") or None
+        manager.add_task(title, cat, prio, due)
+    elif choice == "2":
+        manager.view_tasks()  # View all tasks
+    elif choice == "3":
+        manager.complete_task(int(input("Task number: ")))  # Complete task
+    elif choice == "4":
+        manager.delete_task(int(input("Task number: ")))    # Delete task
+    elif choice == "5":
+        manager.search_tasks(input("Enter keyword: "))      # Search tasks
+    elif choice == "6":
+        manager.view_tasks("category", input("Category: ")) # Filter by category
+    elif choice == "7":
+        break  # Exit
+    else:
+        print("Invalid choice.")
