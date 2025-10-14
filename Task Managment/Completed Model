@@ -4,7 +4,7 @@ from datetime import datetime
 # MODEL 3 (Advanced Task Manager)
 # Compared to Model 2:
 # - Adds categories, priority, and due dates to tasks.
-# - Tasks are stored as objects (class-based) with extra attributes.
+# - Tasks are stored as objects (class-based) with extra attributes
 # - Adds features like search and delete.
 # - Data is persisted in a JSON file (same as Model 2).
 
